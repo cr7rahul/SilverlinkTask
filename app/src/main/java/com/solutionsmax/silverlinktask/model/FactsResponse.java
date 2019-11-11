@@ -17,4 +17,12 @@ public class FactsResponse {
     public void setsTitle(String sTitle) {
         this.sTitle = sTitle;
     }
+
+    public List<FactsListItem> getResult() {
+        return result;
+    }
+
+    public void setResult(List<FactsListItem> result) {
+        this.result = result;
+    }
 }
