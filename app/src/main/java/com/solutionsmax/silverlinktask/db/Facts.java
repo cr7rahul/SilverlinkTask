@@ -9,6 +9,7 @@ public class Facts {
     @ColumnInfo(name = "id")
     @PrimaryKey(autoGenerate = true)
     int id;
+
     @ColumnInfo(name = "title")
     private String title;
     @ColumnInfo(name = "description")

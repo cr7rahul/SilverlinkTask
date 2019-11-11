@@ -1,9 +1,14 @@
 package com.solutionsmax.silverlinktask;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -30,8 +35,11 @@ public class FactsActivity extends AppCompatActivity implements ConnectivityRece
     Toolbar toolbar;
     @BindView(R.id.factsRecyclerView)
     RecyclerView factsRecyclerView;
+    @BindView(R.id.progressDialog)
+    ProgressBar progressDialog;
     FactsListViewModel factsListViewModel;
-
+    FactsListAdapter adapter;
+    FactsCachedAdapter cachedAdapter;
     FactsRoomDBViewModel factsRoomDBViewModel;
 
     @Override
@@ -43,6 +51,7 @@ public class FactsActivity extends AppCompatActivity implements ConnectivityRece
         checkConnection();
 
         factsRecyclerView.setLayoutManager(new LinearLayoutManager(FactsActivity.this));
+
         factsListViewModel = ViewModelProviders.of(this).get(FactsListViewModel.class);
         factsRoomDBViewModel = ViewModelProviders.of(this).get(FactsRoomDBViewModel.class);
     }
@@ -56,18 +65,47 @@ public class FactsActivity extends AppCompatActivity implements ConnectivityRece
     //Show alert dialog if not connected to network
     private void showNetworkDialog(boolean isConnected) {
         if (!isConnected) {
-            DialogUtils.showDialog(FactsActivity.this, "Not Connected to Internet");
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setMessage("Not Connected to network");
+            alertDialogBuilder.setPositiveButton("Retry",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            startActivity(new Intent(getApplicationContext(), FactsActivity.class));
+                        }
+                    });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+            loadCachedData();
         }
+    }
+
+    //Load Cached Data when not connected to network
+    private void loadCachedData() {
+        // Show contents from room db
+        factsRoomDBViewModel.getCachedFacts().observe(this, new Observer<List<Facts>>() {
+            @Override
+            public void onChanged(List<Facts> facts) {
+                for (int i = 0; i < facts.size(); i++) {
+                    cachedAdapter = new FactsCachedAdapter(FactsActivity.this, facts);
+                    factsRecyclerView.setAdapter(cachedAdapter);
+                }
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //Setting data to RecyclerView
+        progressDialog.setVisibility(View.VISIBLE);
         factsListViewModel.retrieveFactsList().observe(this, new Observer<List<FactsListItem>>() {
             @Override
             public void onChanged(List<FactsListItem> factsListItems) {
-                factsRecyclerView.setAdapter(new FactsListAdapter(FactsActivity.this, factsListItems));
+                progressDialog.setVisibility(View.GONE);
+                adapter = new FactsListAdapter(FactsActivity.this, factsListItems);
+                factsRecyclerView.setAdapter(adapter);
                 //Save data to room db
                 saveDataToCache(factsListItems);
             }
@@ -81,15 +119,6 @@ public class FactsActivity extends AppCompatActivity implements ConnectivityRece
             }
         });
 
-        // Show contents from room db
-        factsRoomDBViewModel.getCachedFacts().observe(this, new Observer<List<Facts>>() {
-            @Override
-            public void onChanged(List<Facts> facts) {
-                for (int i = 0; i < facts.size(); i++) {
-                    factsRecyclerView.setAdapter(new FactsCachedAdapter(FactsActivity.this, facts));
-                }
-            }
-        });
 
     }
 

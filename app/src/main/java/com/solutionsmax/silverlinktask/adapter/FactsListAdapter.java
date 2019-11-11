@@ -53,6 +53,7 @@ public class FactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return listItems.size();
     }
 
+
     public class FactsListViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.lblDescription)
         TextView lblDescription;

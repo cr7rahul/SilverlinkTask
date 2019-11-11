@@ -20,12 +20,15 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
         <item name="android:layout_weight">1</item>
     </style>
 
     <style name="CircleImage" parent="android:Widget">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">60dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
     </style>
 
     <style name="set_dialog" parent="@android:style/Theme.Holo.Dialog">
@@ -36,6 +39,7 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:layout_width">100dp</item>
+        <item name="android:textColor">#FFF</item>
     </style>
 
 </resources>
