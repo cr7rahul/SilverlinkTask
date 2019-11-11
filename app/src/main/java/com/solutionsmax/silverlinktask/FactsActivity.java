@@ -42,6 +42,8 @@ public class FactsActivity extends AppCompatActivity implements ConnectivityRece
     FactsCachedAdapter cachedAdapter;
     FactsRoomDBViewModel factsRoomDBViewModel;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
