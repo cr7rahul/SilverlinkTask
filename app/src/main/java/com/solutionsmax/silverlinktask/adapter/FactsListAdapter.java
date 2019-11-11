@@ -57,7 +57,7 @@ public class FactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         TextView lblDescription;
         @BindView(R.id.lblTitle)
         TextView lblTitle;
-        @BindView(R.id.lblDescription)
+        @BindView(R.id.imgFacts)
         CircleImageView imgFacts;
 
         public FactsListViewHolder(@NonNull View itemView) {

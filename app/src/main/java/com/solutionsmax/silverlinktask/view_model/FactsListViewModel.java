@@ -17,7 +17,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FactsListViewModel extends ViewModel {
-    MutableLiveData<List<FactsListItem>> factsList;
+    private MutableLiveData<List<FactsListItem>> factsList;
+    private MutableLiveData<String> sToolbarTitle;
 
     public LiveData<List<FactsListItem>> retrieveFactsList() {
         if (factsList == null) {
@@ -25,6 +26,32 @@ public class FactsListViewModel extends ViewModel {
             retrieveFacts();
         }
         return factsList;
+    }
+
+
+    public LiveData<String> toolbarTitle() {
+        if (sToolbarTitle == null) {
+            sToolbarTitle = new MutableLiveData<>();
+            retrieveToolbarTitle();
+        }
+        return sToolbarTitle;
+    }
+
+    private void retrieveToolbarTitle() {
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        apiInterface.getFacts().enqueue(new Callback<FactsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<FactsResponse> call, @NonNull Response<FactsResponse> response) {
+                if (response.body() != null && response.isSuccessful()) {
+                    sToolbarTitle.setValue(response.body().getsTitle());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<FactsResponse> call, @NonNull Throwable t) {
+
+            }
+        });
     }
 
     private void retrieveFacts() {
