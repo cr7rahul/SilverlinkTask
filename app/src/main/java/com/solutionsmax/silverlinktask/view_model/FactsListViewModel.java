@@ -61,6 +61,7 @@ public class FactsListViewModel extends ViewModel {
             public void onResponse(@NonNull Call<FactsResponse> call, @NonNull Response<FactsResponse> response) {
                 if (response.body() != null && response.isSuccessful()) {
                     factsList.setValue(response.body().getResult());
+
                 }
             }
 
